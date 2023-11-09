@@ -5,8 +5,8 @@ from email.mime.text import MIMEText
 
 def send_notification(subject, message_html, recipients):
     # Email configuration
-    sender_email = 'nidhi22inmas@gmail.com'
-    sender_password = 'hhfaizgjcaqpsjwl'
+    sender_email = 'mahimatripathi0625@gmail.com'
+    sender_password = 'fvhzimtbnbnhairi'
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587  # Port for Gmail SMTP
 
@@ -41,30 +41,11 @@ def send_notification(subject, message_html, recipients):
 # Usage example
 if __name__ == "__main__":
     subject = "New Products Alert"
-    recipients = ['kdhini2807@gmail.com']
+    recipients = ['rprithvi786@gmail.com']
 
     # Example table HTML (replace this with your actual table HTML)
     table_html = """
-    <table border="1">
-        <tr>
-            <th>Product Name</th>
-            <th>Original Price</th>
-            <th>Discounted Price</th>
-            <th>Discount</th>
-        </tr>
-        <tr>
-            <td>Product 1</td>
-            <td>$10.00</td>
-            <td>$8.00</td>
-            <td>20%</td>
-        </tr>
-        <tr>
-            <td>Product 2</td>
-            <td>$15.00</td>
-            <td>$12.00</td>
-            <td>20%</td>
-        </tr>
-    </table>
+   
     """
 
     # Your message containing the table HTML

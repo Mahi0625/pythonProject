@@ -6,13 +6,13 @@ from scraper import scrape_products  # Import your scraper function
 from notifier import send_notification
 from utils import load_inserted_products, update_inserted_products
 from datetime import datetime
-import pytz 
 from notification_formatter import format_notification_table
 from notification_formatter import format_notification_table_np
+import pytz
 
 # Define a function to create an Excel file with multiple sheets
 def create_excel_file(categories):
-    workbook = xlsxwriter.Workbook('E:\VegEase\Vegease\BigBasket\Bigbasket_products.xlsx')
+    workbook = xlsxwriter.Workbook('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products.xlsx')
 
     for _, category_name in categories:
         workbook.add_worksheet(category_name)
@@ -21,7 +21,7 @@ def create_excel_file(categories):
 
 # Define a function to create a database for historical price records
 def create_database():
-    conn_products = sqlite3.connect('E:\VegEase\Vegease\BigBasket\Bigbasket.db')
+    conn_products = sqlite3.connect('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products_database.db')
     c_products = conn_products.cursor()
 
     # Create products table if not exists
@@ -32,18 +32,18 @@ def create_database():
         discount TEXT,
         category TEXT,
         quantity TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        timestamp TEXT  -- Change the data type to TEXT
     )''')
     conn_products.commit()
     conn_products.close()
 
-    conn_history = sqlite3.connect('E:\VegEase\Vegease\BigBasket\Bigbasket_price_history.db')
+    conn_history = sqlite3.connect('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_price_history.db')
     c_history = conn_history.cursor()
 
     # Create price history table if not exists
     c_history.execute('''CREATE TABLE IF NOT EXISTS price_history (
         product_name TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
         price TEXT
     )''')
     conn_history.commit()
@@ -55,15 +55,15 @@ def main_function(url, category_name, existing_df):
     bigbasket_product_cards = scrape_products(url)
 
     # Set up SQLite database connection for products
-    conn_products = sqlite3.connect('E:\VegEase\Vegease\BigBasket\Bigbasket_products_database.db')
+    conn_products = sqlite3.connect('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products_database.db')
     c_products = conn_products.cursor()
 
     # Set up SQLite database connection for price history
-    conn_history = sqlite3.connect('E:\VegEase\Vegease\BigBasket\Bigbasket_price_history.db')
+    conn_history = sqlite3.connect('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_price_history.db')
     c_history = conn_history.cursor()
 
     # Load the set of inserted products from the file
-    inserted_products = load_inserted_products('E:\VegEase\Vegease\BigBasket\Bigbasket_inserted_products.txt')
+    inserted_products = load_inserted_products('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_inserted_products.txt')
 
     # Lists to keep track of new and updated products
     new_products = []
@@ -84,31 +84,29 @@ def main_function(url, category_name, existing_df):
         discount = discount_elem.text.strip() if discount_elem else "N/A"
         quantity = quantity_elem.text.strip() if quantity_elem else "N/A"
         
-        
         # Set the timezone to IST
         ist = pytz.timezone('Asia/Kolkata')
-        current_time = datetime.now(ist)
-        
+        current_time = datetime.now(ist).strftime('%Y-%m-%d %H:%M:%S')
+
         # Check if the product is new or updated
         if product_name not in inserted_products:
             new_products.append((product_name, original_price, discounted_price, quantity))
             inserted_products.add(product_name)
-       
-        # Get the most recent price from the price history
-        c_history.execute("SELECT price FROM price_history WHERE product_name=? ORDER BY timestamp DESC LIMIT 1", (product_name,))
-        last_price = c_history.fetchone()
+        else:
+            # Get the most recent price from the price history
+            c_history.execute("SELECT price FROM price_history WHERE product_name=? ORDER BY timestamp DESC LIMIT 1", (product_name,))
+            last_price = c_history.fetchone()
 
-        if last_price is not None and last_price[0] != discounted_price:
+            if last_price is not None and last_price[0] != discounted_price:
                 updated_products.append((product_name, last_price[0], discounted_price, quantity))
-                
-            # Record the current price in the price history
+
+        # Record the current price in the price history
         c_history.execute("INSERT INTO price_history (product_name, price) VALUES (?, ?)", (product_name, discounted_price))
 
         # Update or insert the product details in the database
         c_products.execute('''INSERT OR REPLACE INTO products (product_name, original_price, discounted_price, discount, quantity, category, timestamp) VALUES (?,?,?,?,?,?,?)''',
                           (product_name, original_price, discounted_price, discount, quantity, category_name, current_time))
 
-        
     # Commit changes and close the database connections
     conn_products.commit()
     conn_products.close()
@@ -116,7 +114,7 @@ def main_function(url, category_name, existing_df):
     conn_history.close()
 
     # Update the inserted products file
-    update_inserted_products('E:\VegEase\Vegease\BigBasket\Bigbasket_inserted_products.txt', inserted_products)
+    update_inserted_products('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_inserted_products.txt', inserted_products)
 
     return new_products, updated_products
 
@@ -130,7 +128,7 @@ if __name__ == "__main__":
     ]
 
     # Create Excel file with sheets if it doesn't exist
-    if not os.path.isfile('E:\VegEase\Vegease\BigBasket\Bigbasket_products.xlsx'):
+    if not os.path.isfile('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products.xlsx'):
         create_excel_file(categories)
 
     all_new_products = {}
@@ -145,7 +143,7 @@ if __name__ == "__main__":
     # Concatenate the existing DataFrame with new data
     for category in categories:
         category_name = category[1]
-        conn = sqlite3.connect('E:\VegEase\Vegease\BigBasket\Bigbasket_products_database.db')
+        conn = sqlite3.connect('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products_database.db')
         df = pd.read_sql_query(f"SELECT * FROM products WHERE category='{category_name}'", conn)
         conn.close()
         existing_df = pd.concat([existing_df, df], ignore_index=True)
@@ -153,26 +151,25 @@ if __name__ == "__main__":
         # Remove duplicates from the combined DataFrame
         existing_df.drop_duplicates(subset=["product_name"], keep="last", inplace=True)
 
-
     # Update Excel file and sheets
-    with pd.ExcelWriter('E:\VegEase\Vegease\BigBasket\Bigbasket_products.xlsx', engine='xlsxwriter') as writer:
+    with pd.ExcelWriter('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products.xlsx', engine='xlsxwriter') as writer:
         for category in categories:
             category_name = category[1]
             df_category = existing_df[existing_df["category"] == category_name]
-            df_category.to_excel(writer, sheet_name=category_name, index=False)  # This line should be indented correctly
+            df_category.to_excel(writer, sheet_name=category_name, index=False)
 
     # Prepare notification messages for new and updated products
     new_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table_np(products)}" for category, products in all_new_products.items() if products])
     updated_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table(products)}" for category, products in all_updated_products.items() if products])
 
-    # Print the DataFrame head for the last category
-    print(f"Category: {category_name}\n{df_category.head()}")
-    
-    recipients = ['amit.khanna@egreens.com', 'kdhini2807@gmail.com']  # Add the second email here
+    recipients = ['amit.khanna@egreens.com', 'mahimatripathi0625@gmail.com','rprithvi786@gmail.com']  # Add the second email here
 
     # Send notifications for new and updated products
     if new_products_notification_text:
-        send_notification("BigBasket: New Products Alert", f"New products added:\n{new_products_notification_text}\nCheck them out!", 'kdhini2807@gmail.com')
+        send_notification("BigBasket: New Products Alert", f"New products added:\n{new_products_notification_text}\nCheck them out!", recipients)
 
     if updated_products_notification_text:
-        send_notification("BigBasket: Price Changes Alert", f"Price changes detected:\n{updated_products_notification_text}\nTime to grab a deal!", 'kdhini2807@gmail.com')
+        send_notification("BigBasket: Price Changes Alert", f"Price changes detected:\n{updated_products_notification_text}\nTime to grab a deal!", recipients)
+
+    # Print the DataFrame head for the last category
+    print(f"Category: {category_name}\n{df_category.head()}")
