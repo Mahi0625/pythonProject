@@ -124,18 +124,12 @@ def main_function(url, category_name, existing_df):
 
     return new_products, updated_products
 
-if __name__ == "__main__":
-    # Create the historical price database
-    create_database()
-
+# Define a function to run your main function and send notifications
+def run_scraping_and_notification():
     categories = [
         ('https://www.otipy.com/category/vegetables-1', 'Vegetables'),
         ('https://www.otipy.com/category/fruits-2', 'Fruits'),
     ]
-
-    # Create Excel file with sheets if it doesn't exist
-    if not os.path.isfile('/home/mahima/Downloads/Vegease/Otipy/otipy_products.xlsx'):
-        create_excel_file(categories)
 
     all_new_products = {}
     all_updated_products = {}
@@ -170,13 +164,20 @@ if __name__ == "__main__":
 
     # Print the DataFrame head for the last category
     print(f"Category: {category_name}\n{df_category.head()}")
-    
+
     recipients = ['mahimatripathi0625@gmail.com', 'rprithvi786@gmail.com','amit.khanna@egreens.com']  # Add the second email here
 
     # Send notifications for new and updated products
     if new_products_notification_text:
-        send_notification("Otipy: New Products Alert", f"New products added:\n{new_products_notification_text}\nCheck them out!", 'mahimatripathi0625@gmail.com')
+        send_notification("Otipy: New Products Alert", f"New products added:\n{new_products_notification_text}\nCheck them out!", recipients)
 
     if updated_products_notification_text:
-        send_notification("Otipy: Price Changes Alert", f"Price changes detected:\n{updated_products_notification_text}\nTime to grab a deal!", 'mahimatripathi0625@gmail.com')
-    
+        send_notification("Otipy: Price Changes Alert", f"Price changes detected:\n{updated_products_notification_text}\nTime to grab a deal!", recipients)
+
+# Schedule the scraping and notification function to run every hour
+schedule.every().hour.do(run_scraping_and_notification)
+
+# Run the scheduler indefinitely
+while True:
+    schedule.run_pending()
+    time.sleep(1)

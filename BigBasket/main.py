@@ -9,7 +9,8 @@ from datetime import datetime
 from notification_formatter import format_notification_table
 from notification_formatter import format_notification_table_np
 import pytz
-
+import schedule
+import time
 # Define a function to create an Excel file with multiple sheets
 def create_excel_file(categories):
     workbook = xlsxwriter.Workbook('/home/mahima/Downloads/Vegease/BigBasket/Bigbasket_products.xlsx')
@@ -118,7 +119,7 @@ def main_function(url, category_name, existing_df):
 
     return new_products, updated_products
 
-if __name__ == "__main__":
+def run_scraping_and_notification():
     # Create the historical price database
     create_database()
 
@@ -162,7 +163,7 @@ if __name__ == "__main__":
     new_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table_np(products)}" for category, products in all_new_products.items() if products])
     updated_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table(products)}" for category, products in all_updated_products.items() if products])
 
-    recipients = ['amit.khanna@egreens.com', 'mahimatripathi0625@gmail.com','rprithvi786@gmail.com']  # Add the second email here
+    recipients = ['mahimatripathi0625@gmail.com','rprithvi786@gmail.com','amit.khanna@egreens.com']  # Add the second email here
 
     # Send notifications for new and updated products
     if new_products_notification_text:
@@ -173,3 +174,9 @@ if __name__ == "__main__":
 
     # Print the DataFrame head for the last category
     print(f"Category: {category_name}\n{df_category.head()}")
+schedule.every().hour.do(run_scraping_and_notification)
+
+  # Run the scheduler indefinitely
+while True:
+    schedule.run_pending()
+    time.sleep(1)
