@@ -1,0 +1,55 @@
+96
+Traceback (most recent call last):
+  File "/home/mahima/Downloads/Vegease/BigBasket/main.py", line 182, in <module>
+    time.sleep(1)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/mahima/Downloads/Vegease/BigBasket/main.py", line 5, in <module>
+    from scraper import scrape_products  # Import your scraper function
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/Downloads/Vegease/BigBasket/scraper.py", line 53, in <module>
+    product_cards = scrape_products(bigbasket_url)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/Downloads/Vegease/BigBasket/scraper.py", line 24, in scrape_products
+    driver.get(url)
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 355, in get
+    self.execute(Command.GET, {"url": url})
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 344, in execute
+    response = self.command_executor.execute(driver_command, params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/selenium/webdriver/remote/remote_connection.py", line 300, in execute
+    return self._request(command_info[0], url, body=data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/selenium/webdriver/remote/remote_connection.py", line 321, in _request
+    response = self._conn.request(method, url, body=body, headers=headers)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/request.py", line 78, in request
+    return self.request_encode_body(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/request.py", line 170, in request_encode_body
+    return self.urlopen(method, url, **extra_kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/poolmanager.py", line 376, in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/connectionpool.py", line 714, in urlopen
+    httplib_response = self._make_request(
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 3, in raise_from
+  File "/home/mahima/miniconda3/lib/python3.11/site-packages/urllib3/connectionpool.py", line 461, in _make_request
+    httplib_response = conn.getresponse()
+                       ^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/http/client.py", line 1378, in getresponse
+    response.begin()
+  File "/home/mahima/miniconda3/lib/python3.11/http/client.py", line 318, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/http/client.py", line 279, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mahima/miniconda3/lib/python3.11/socket.py", line 706, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

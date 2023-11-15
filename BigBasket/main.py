@@ -163,7 +163,7 @@ def run_scraping_and_notification():
     new_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table_np(products)}" for category, products in all_new_products.items() if products])
     updated_products_notification_text = "\n".join([f"Category: {category}\n{format_notification_table(products)}" for category, products in all_updated_products.items() if products])
 
-    recipients = ['mahimatripathi0625@gmail.com','rprithvi786@gmail.com','amit.khanna@egreens.com']  # Add the second email here
+    recipients = ['mahimatripathi0625@gmail.com','rprithvi786@gmail.com',]  # Add the second email here
 
     # Send notifications for new and updated products
     if new_products_notification_text:

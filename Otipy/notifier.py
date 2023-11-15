@@ -10,7 +10,7 @@ def send_notification(subject, message_html, recipients):
     sender_password = 'fvhzimtbnbnhairi'
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587  # Port for Gmail SMTP
-
+    
     # Create a multipart message
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
