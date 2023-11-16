@@ -13,7 +13,7 @@ import schedule
 import time
 # Define a function to create an Excel file with multiple sheets
 def create_excel_file(categories):
-    workbook = xlsxwriter.Workbook('/home/mahima/Downloads/Vegease/Otipy/otipy_products.xlsx')
+    workbook = xlsxwriter.Workbook('/home/ubuntu/pythonProject/Otipy/otipy_products.xlsx')
 
     for _, category_name in categories:
         workbook.add_worksheet(category_name)
@@ -22,7 +22,7 @@ def create_excel_file(categories):
 
 # Define a function to create a database for historical price records
 def create_database():
-    conn_products = sqlite3.connect('/home/mahima/Downloads/Vegease/Otipy/otipy_products_database.db')
+    conn_products = sqlite3.connect('/home/ubuntu/pythonProject/Otipy/otipy_products_database.db')
     c_products = conn_products.cursor()
 
     # Create products table if not exists
@@ -38,7 +38,7 @@ def create_database():
     conn_products.commit()
     conn_products.close()
 
-    conn_history = sqlite3.connect('/home/mahima/Downloads/Vegease/Otipy/otipy_price_history.db')
+    conn_history = sqlite3.connect('/home/ubuntu/pythonProject/Otipy/otipy_price_history.db')
     c_history = conn_history.cursor()
 
     # Create price history table if not exists
@@ -56,15 +56,15 @@ def main_function(url, category_name, existing_df):
     otipy_product_cards = scrape_products(url)
 
     # Set up SQLite database connection for products
-    conn_products = sqlite3.connect('/home/mahima/Downloads/Vegease/Otipy/otipy_products_database.db')
+    conn_products = sqlite3.connect('/home/ubuntu/pythonProject/Otipy/otipy_products_database.db')
     c_products = conn_products.cursor()
 
     # Set up SQLite database connection for price history
-    conn_history = sqlite3.connect('/home/mahima/Downloads/Vegease/Otipy/otipy_price_history.db')
+    conn_history = sqlite3.connect('/home/ubuntu/pythonProject/Otipy/otipy_price_history.db')
     c_history = conn_history.cursor()
 
     # Load the set of inserted products from the file
-    inserted_products = load_inserted_products('/home/mahima/Downloads/Vegease/Otipy/otipy_inserted_products.txt')
+    inserted_products = load_inserted_products('/home/ubuntu/pythonProject/Otipy/otipy_inserted_products.txt')
 
     # Lists to keep track of new and updated products
     new_products = []
@@ -120,7 +120,7 @@ def main_function(url, category_name, existing_df):
     conn_history.close()
 
     # Update the inserted products file
-    update_inserted_products('/home/mahima/Downloads/Vegease/Otipy/otipy_inserted_products.txt', inserted_products)
+    update_inserted_products('/home/ubuntu/pythonProject/Otipy/otipy_inserted_products.txt', inserted_products)
 
     return new_products, updated_products
 
@@ -143,7 +143,7 @@ def run_scraping_and_notification():
     # Concatenate the existing DataFrame with new data
     for category in categories:
         category_name = category[1]
-        conn = sqlite3.connect('/home/mahima/Downloads/Vegease/Otipy/otipy_products_database.db')
+        conn = sqlite3.connect('/home/ubuntu/pythonProject/Otipy/otipy_products_database.db')
         df = pd.read_sql_query(f"SELECT * FROM products WHERE category='{category_name}'", conn)
         conn.close()
         existing_df = pd.concat([existing_df, df], ignore_index=True)
@@ -152,7 +152,7 @@ def run_scraping_and_notification():
         existing_df.drop_duplicates(subset=["product_name"], keep="last", inplace=True)
 
     # Update Excel file and sheets
-    with pd.ExcelWriter('/home/mahima/Downloads/Vegease/Otipy/otipy_products.xlsx', engine='xlsxwriter') as writer:
+    with pd.ExcelWriter('/home/ubuntu/pythonProject/Otipy/otipy_products.xlsx', engine='xlsxwriter') as writer:
         for category in categories:
             category_name = category[1]
             df_category = existing_df[existing_df["category"] == category_name]
@@ -165,7 +165,7 @@ def run_scraping_and_notification():
     # Print the DataFrame head for the last category
     print(f"Category: {category_name}\n{df_category.head()}")
 
-    recipients = ['mahimatripathi0625@gmail.com', 'rprithvi786@gmail.com','amit.khanna@egreens.com']  # Add the second email here
+    recipients = ['naveen.jeena@vegease.in','harsh.goyal@vegease.in','amit.khanna@egreens.com','arpit@egreens.com','mahimatripathi0625@gmail.com','rprithvi786@gmail.com']  # Add the second email here
 
     # Send notifications for new and updated products
     if new_products_notification_text:
