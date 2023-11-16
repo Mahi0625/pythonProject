@@ -42,7 +42,7 @@ def send_notification(subject, message_html, recipients):
 # Usage example
 if __name__ == "__main__":
     subject = "New Products Alert"
-    recipients = ['rprithvi786@gmail.com']
+    recipients = ['naveen.jeena@vegease.in','harsh.goyal@vegease.in']
 
     # Example table HTML (replace this with your actual table HTML)
     table_html = """
